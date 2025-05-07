@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>emexOS14 - Home</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="parallaxTop" style="background-image: url(images/homeScreenBlurred.jpg);">
+
+  <div class="container">
+    <p class="title"><strong> EMEXOS14</strong></p>
+    <p class="subtitle">The OS for Computer lover</p>
+
+    <div class="info-box">
+      <p>
+        <strong>emexOS14 : Auron</strong> is a minimal, ultra-fast operating system for retro and tech enthusiasts.
+        It runs on just <strong>2.3 MB</strong> and runs on virtual machines, and sometimes on real hardware.
+      </p>
+      <p>
+        the newest version is at the <a href="download.html">Download page</a>.
+      </p>
+    </div>
+
+    <hr class="separator">
+
+    <section class="about1">
+      <h2><strong>Testing</strong></h2>
+      <p><strong>What do you need, for a Mod-OS?</strong></p>
+      <ol>
+        <p>if you want to make your own Mod-os simply download the <strong><a href="https://github.com/JonsonsHub">OS</a> </strong>and then install
+          <pre id="dev-commands">" make, i686-elf-gcc, i686-elf-ld, nasm, and qemu "</pre> <strong>next step:</strong> run the Makefile in the terminal 'make',</p>  
+          <p>and if you don't want to install make then run ''./build.sh'.</p>  
+          <p><strong>It doesnt work?</strong> bevore ''./build.sh' run 'chmod +x build.sh', but make sure that you are in the right directory</p>
+      </ol>
+
+      <div class="sidebar-block">
+        <p><strong> </strong> if you don't want to use qemu then you can use <a href="https://www.virtualbox.org/">VirtualBox</a>.</p>
+      </div>
+
+      </ul>
+    </section>
+
+    <hr class="separator">
+
+    <section class="developer">
+        <h2><strong>For developeers</strong></h2>
+        <p>these commands aren't in the <strong>help</strong>-Menu:</p>
+        <div class="code-block">
+          <pre id="dev-commands">
+      ping        // sends an arp request
+      colors      // shows a few colors with hex
+      run         // runs .sj files (elf32)
+      sDebug      // shows numbers., special characters... in color
+          </pre>
+          <button class="copy-btn" data-target="dev-commands">copy</button>
+        </div>
+    </section>
+    <script>
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const pre = document.getElementById(btn.dataset.target);
+            navigator.clipboard.writeText(pre.textContent.trim());
+            btn.textContent = 'copied!';
+            setTimeout(() => btn.textContent = 'Kopieren', 1500);
+          });
+        });
+    </script>
+      
+
+    <div id="parent">
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="button learnMore" onclick="location.href='download.html'">Downlod zw</button>
+    </div>
+  </div>
+
+  <script src="sketch.js"></script>
+</body>
+</html>
