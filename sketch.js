@@ -81,3 +81,4 @@ window.onload = function () {
 
     observer.observe(canvas);
 };
+
