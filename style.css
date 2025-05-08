@@ -17,6 +17,7 @@ a:active {
 }
 
 .container {
+
     max-width: 900px;
     margin: 0 auto;
     padding: 40px 20px;
@@ -167,6 +168,31 @@ a:active {
     position: relative;
     margin-top: 15px;
     margin-bottom: 15px;
+    text-align: left;
+}
+.field {
+    background-color: #000000;
+    padding: 15px;
+    border-radius: 11px;
+    position: relative;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: left;
+    color: #ffffff;
+}
+.fieldWhite {
+    background-color: #f4f4f4;
+    padding: 1px;
+    border-radius: 10px;
+    position: relative;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+
+.h5 {
+    color: #ffffff;
 }
 
 /* Copy-Button */
@@ -186,3 +212,7 @@ a:active {
 .copy-btn:hover {
     background: #b7b7b7;
 }
+
+.cmd-green {
+    color: rgb(0, 215, 32);
+  }
