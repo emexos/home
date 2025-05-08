@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Tagesschrift&display=swap');
+
 body {
     background-color: rgb(255, 255, 255);
     text-align: center;
@@ -11,4 +13,17 @@ body {
 }
 .h1 {
     font: bold;
+    font-family: "Tagesschrift", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+a{
+ text-decoration: none;
+ color: rgb(39, 174, 75);
+}
+
+a::after{
+    text-decoration: none;
+    color: rgb(22, 100, 43);
 }
