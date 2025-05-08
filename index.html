@@ -11,7 +11,7 @@
 
   <div class="container">
     <p class="title"><strong> EMEXOS14</strong></p>
-    <p class="subtitle">The OS for Computer lover</p>
+    <p class="subtitle">The OS with no BLOATWARE</p>
 
     <div class="info-box">
       <p>
@@ -21,31 +21,83 @@
       <p>
         the newest version is at the <a href="download.html">Download page</a>.
       </p>
+      
     </div>
+    <hr class="separator">
 
+    <div class="tut">
+        <pre class="tut">
+          syscheck look:  ############;m;        user@emexos
+                          #  #########;m;        ----------------   
+                          #  #;m;                OS: emexOS14 x86                       
+                          #  #;m;                version name: Auron                 
+                          #  #########;m;        Kernel: vinuOS8/32                      
+                          #  #########;m;        Resolution: 800x600
+                          #  #;m;                Video Mode: VESA BIOS
+                          #  #;m;                CPU: <span id="cpu-name">Lade...</span>
+                          #  #########;m;        Date: <span id="sys-date">Lade...</span>
+                          ############;m;        Vgfx: gfx-vesa-spl-b-1
+        </pre>
+    </div>
+    <script>
+      // CPU-Name automatisch anzeigen
+      const cpuInfo = navigator.hardwareConcurrency 
+        ? navigator.hardwareConcurrency + "x Virtual CPU"
+        : "Unbekannt";
+      document.getElementById("cpu-name").textContent = cpuInfo;
+  
+      // Aktuelles Datum im deutschen Format
+      const now = new Date();
+      document.getElementById("sys-date").textContent =
+        now.toLocaleDateString("de-DE");
+    </script>
     <hr class="separator">
 
     <section class="about1">
-      <h2><strong>Testing</strong></h2>
+      <h2><strong>Moded - OS</strong></h2>
       <p><strong>What do you need, for a Mod-OS?</strong></p>
       <ol>
-        <p>if you want to make your own Mod-os simply download the <strong><a href="https://github.com/JonsonsHub">OS</a> </strong>and then install
-          <pre id="dev-commands">" make, i686-elf-gcc, i686-elf-ld, nasm, and qemu "</pre> <strong>next step:</strong> run the Makefile in the terminal 'make',</p>  
-          <p>and if you don't want to install make then run ''./build.sh'.</p>  
-          <p><strong>It doesnt work?</strong> bevore ''./build.sh' run 'chmod +x build.sh', but make sure that you are in the right directory</p>
+        <p><strong>1.</strong> if you want to make your own Mod-os simply download the <strong><a href="https://github.com/JonsonsHub">OS</a> </strong>and then install the following packages:
+          </p><pre id="dev-commands">  ' make, i686-elf-gcc, i686-elf-ld, nasm, and qemu '/ (homebrew) (mac/linux)</pre>
+          <strong>2.</strong> open the Terminal in the OS directory and type in 'make',  and if you don't want to install make then run ''./build.sh'.</p>  
+          <p><strong>It doesnt work?</strong></p>
+          <p>                  - before ''./build.sh' run 'chmod +x build.sh', but make sure that you are in the right directory</p>
+
+
+         
       </ol>
 
       <div class="sidebar-block">
-        <p><strong> </strong> if you don't want to use qemu then you can use <a href="https://www.virtualbox.org/">VirtualBox</a>.</p>
+        <p><strong> </strong> if you don't want to use qemu,you can use <a href="https://www.virtualbox.org/">VirtualBox</a>.</p>
       </div>
 
       </ul>
-    </section>
-
+    </section>          
+    <hr class="separator">
+    <div class="field">OS - HelpMenu
+      <pre>
+        <span class="cmd-green">clear</span>     - Clear the screen
+        <span class="cmd-green">about</span>     - More about emexOS
+        <span class="cmd-green">echo</span>      - Show a message on terminal
+        <span class="cmd-green">shut</span>      - Shutdown the system
+        <span class="cmd-green">reboot</span>    - Reboot the system
+        <span class="cmd-green">syscheck</span>  - Show system specs
+        <span class="cmd-green">gfx</span>       - Starts emexOS GUI
+        <span class="cmd-green">crfile</span>    - Create a file
+        <span class="cmd-green">rfile</span>     - Read file content
+        <span class="cmd-green">info</span>      - Show a file info
+        <span class="cmd-green">rename</span>    - Rename a existing file
+        <span class="cmd-green">delfile</span>   - Delete a existing file
+        <span class="cmd-green">ls</span>        - List all files/dir in current local
+        <span class="cmd-green">crdir</span>     - Create a directory
+        <span class="cmd-green">deldir</span>    - Delete a existing directory
+        <span class="cmd-green">cd</span>        - Change the current directory
+        </pre>
+    </div>
     <hr class="separator">
 
     <section class="developer">
-        <h2><strong>For developeers</strong></h2>
+        <h2><strong>For developers</strong></h2>
         <p>these commands aren't in the <strong>help</strong>-Menu:</p>
         <div class="code-block">
           <pre id="dev-commands">
