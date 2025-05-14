@@ -1,29 +1,89 @@
 @import url('https://fonts.googleapis.com/css2?family=Tagesschrift&display=swap');
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Tagesschrift', system-ui, sans-serif;
+  background-color: #fff;
+  color: #333;
+}
+
 body {
-    background-color: rgb(255, 255, 255);
-    text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
 }
-.index{
-    text-align: center;
-    background-color: rgb(207, 234, 255);
-    max-width: 600px;
-    padding: 20px;
-    border-radius: 45px;
+
+.index {
+  background-color: #CFEAFF;
+  max-width: 600px;
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
 }
+
 .h1 {
-    font: bold;
-    font-family: "Tagesschrift", system-ui;
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Tagesschrift', system-ui, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
-a{
- text-decoration: none;
- color: rgb(39, 174, 75);
+a {
+  text-decoration: none;
+  color: #27AE4B;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-a::after{
-    text-decoration: none;
-    color: rgb(22, 100, 43);
+a:hover,
+a:focus {
+  color: #16642B;
+}
+
+a::after {
+  content: '';
+  display: inline-block;
+  margin-left: 0.25rem;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  margin-top: 1.5rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .index {
+    padding: 1rem;
+    border-radius: 1.5rem;
+  }
+
+  .h1 {
+    font-size: 1.5rem;
+  }
 }
