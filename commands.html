@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="icon.png" type="image/x-icon">
+    <title>emexOS14 - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <p class="title"><strong> EMEXOS14</strong></p>
+        <p class="subtitle"> All  about the shell</p>
+
+        <hr class="separator">
+
+        <section class="about1">
+            <h2><code>help</code></h2>
+            <p>Shows a list of available shell commands in emexOS along with a short description.</p>
+            <div class="output">
+            <pre>
+        clear     - Clear the screen              |        info      - Show file info            
+        about     - More about emexOS             |        rename    - Rename a file             
+        echo      - Show messages on terminal     |        delfile   - Delete a file             
+        shut      - Shutdown the system           |        ls        - Lists all files/dir       
+        reboot    - Reboot the system             |        crdir     - Create a directory        
+        oscheck   - Show system specs             |        deldir    - Deletes a directory       
+        gfx       - Starts emexOS GUI             |        cd        - Changescurrent directory  
+        crfile    - Create a file                 |        rfile     - Read file content         
+            </pre>
+            
+            </div>
+        </section>
+        <hr class="separator">
+
+        <section class="about1">
+            <h2><code>clear</code></h2>
+            <p>This command clears the Screen</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h3><code>about</code></h3>
+            <div class="output">
+            <pre>
+        --------------------------------------------------------------------
+          Developer: <span class="highlight">/salsaJon</span>
+          First gfx Build: <span class="highlight">05/04/2025</span><br>
+          This OS is made for a school Project, its open source
+          Also, emexOS is the most hardest and best project i maked.
+          this is my first OS with a GUI (VesaGFX) <br>
+          Credits: <span class="highlight">malwarePad(cavOS) |  OS Dev Wiki</span>
+        --------------------------------------------------------------------
+            </pre>
+            </div>
+            <hr class="separator">
+
+            <h2><code>echo Hello, World!</code></h2>
+            <p>Displays the provided text in a new line in the terminal</p><br>
+            <p>simply type in echo and then the text you want to show</p>
+            <div class="output">Hello, World!</div>
+            <hr class="separator">
+
+            <h2><code>shut</code></h2>
+            <p>This command shuts down the system without any output.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>reboot</code></h2>
+            <p>Reboots the system immediately. No output is displayed.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>gfx</code></h2>
+            <p>Starts the emexOS graphical interface. If the mouse driver wasn't initialized, it gets activated automatically. A login window appears, and after setting a password, you are taken to the desktop environment.</p>
+            <div class="output">[GUI is started, login screen shown]</div>
+            <hr class="separator">
+
+            <h2><code>crfile [filename]</code></h2>
+            <p>Creates a new file with the given name in the current directory. No output is shown.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>crdir [dirname]</code></h2>
+            <p>Creates a new directory in the current path. No output is shown.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>rfile [filename]</code></h2>
+            <p>Displays the content of the specified file in the terminal.</p>
+            <div class="output">[contents of the file]</div>
+            <hr class="separator">
+
+            <h2><code>info [filename]</code></h2>
+            <p>Shows basic metadata of a file including name, size, and data offset.</p>
+            <div class="output">
+            <pre>
+            - info ---------------
+            Filename:    [filename]
+            Size:        [size in bytes]
+            Data Offset: [offset value]
+            ----------------------<br>
+            </pre>
+            </div>
+            <hr class="separator">
+
+            <h2><code>rename [old] [new]</code></h2>
+            <p>Renames a file. No output is shown on success.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>delfile [filename]</code></h2>
+            <p>Deletes the specified file. No confirmation or message is displayed.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>deldir [dirname]</code></h2>
+            <p>Deletes the specified directory. No output is shown.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>ls</code></h2>
+            <p>Lists all files and directories in the current path.</p>
+            <div class="output">[list of files and folders]</div>
+            <hr class="separator">
+
+            <h2><code>cd [directory]</code></h2>
+            <p>Changes the current directory to the specified one. No output is shown.</p>
+            <div class="output">(no output)</div>
+            <hr class="separator">
+
+            <h2><code>run [program]</code></h2>
+            <p>Executes an ELF32 binary (with .sj extension) from the system if it exists.</p>
+            <div class="output">[shows text/drawings from program]</div>
+            <hr class="separator">
+
+            <h2><code>init [component]</code></h2>
+            <p>Initializes a system component (like Mouse or gfx). <code>init gfx</code> has the same effect as running <code>gfx</code>.</p>
+            <div class="output">[Mouse initialized] or [GUI started]</div>
+        </section>
+    </div>
+</body>
+</html>
