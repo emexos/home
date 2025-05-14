@@ -6,6 +6,8 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="icon.png" type="image/x-icon">
+
 </head>
 <body class="parallaxTop" style="background-image: url(images/homeScreenBlurred.jpg);">
 
@@ -54,7 +56,7 @@
     <hr class="separator">
 
     <section class="about1">
-      <h2><strong>Moded - OS</strong></h2>
+      <h2><strong>ModOS</strong></h2>
       <p><strong>What do you need, for a Mod-OS?</strong></p>
       <ol>
         <p><strong>1.</strong> if you want to make your own Mod-os simply download the <strong><a href="https://github.com/JonsonsHub">OS</a> </strong>and then install the following packages:
@@ -62,39 +64,36 @@
           <strong>2.</strong> open the Terminal in the OS directory and type in 'make',  and if you don't want to install make then run ''./build.sh'.</p>  
           <p><strong>It doesnt work?</strong></p>
           <p>                  - before ''./build.sh' run 'chmod +x build.sh', but make sure that you are in the right directory</p>
-
-
-         
+          <p> now you can Modify the OS</p>
       </ol>
 
       <div class="sidebar-block">
-        <p><strong> </strong> if you don't want to use qemu,you can use <a href="https://www.virtualbox.org/">VirtualBox</a>.</p>
+        <p><strong> </strong> if you don't want to use qemu, you can use <a href="https://www.virtualbox.org/">VirtualBox</a>.</p>
       </div>
 
       </ul>
-    </section>          
+    </section> 
     <hr class="separator">
-    <div class="field">OS - HelpMenu
-      <pre>
-        <span class="cmd-green">clear</span>     - Clear the screen
-        <span class="cmd-green">about</span>     - More about emexOS
-        <span class="cmd-green">echo</span>      - Show a message on terminal
-        <span class="cmd-green">shut</span>      - Shutdown the system
-        <span class="cmd-green">reboot</span>    - Reboot the system
-        <span class="cmd-green">syscheck</span>  - Show system specs
-        <span class="cmd-green">gfx</span>       - Starts emexOS GUI
-        <span class="cmd-green">crfile</span>    - Create a file
-        <span class="cmd-green">rfile</span>     - Read file content
-        <span class="cmd-green">info</span>      - Show a file info
-        <span class="cmd-green">rename</span>    - Rename a existing file
-        <span class="cmd-green">delfile</span>   - Delete a existing file
-        <span class="cmd-green">ls</span>        - List all files/dir in current local
-        <span class="cmd-green">crdir</span>     - Create a directory
-        <span class="cmd-green">deldir</span>    - Delete a existing directory
-        <span class="cmd-green">cd</span>        - Change the current directory
-        </pre>
-    </div>
-    <hr class="separator">
+    <section class="about1">
+      <h2><strong>About emexOS</strong></h2>
+      <ul>
+        <li><strong>Minimal Footprint;</strong> Pure C & Assembly, ~1 MB kernel image size</li>
+        <li><strong>Memory Management;</strong> Simple malloc/free allocator in RAM</li>
+        <li><strong>Drivers;</strong> PS/2 keyboard & mouse, IDE disk access</li>
+        <li><strong>Graphics Lib;</strong> 800×600 VESA VGA, basic 2D drawing & text</li>
+        <li><strong>GUI Shell;</strong> Window manager and Login</li>
+        
+        <li><strong>Filesystem;</strong> In-RAM memfs, supports files & directories</li>
+        <li><strong>Networking;</strong> (Planned) basic TCP/IP over PCnet emulator</li>
+      </ul>
+      
+    </section>
+
+    <section class="about1">
+      <h2><strong>Commands</strong></h2>
+      <p>Here you find all the commands for the emexOS Shell <br>
+        For a complete list of the commands, look at the full <a href="commands.html">Command Overview</a>.</p>
+    </section>
 
     <section class="developer">
         <h2><strong>For developers</strong></h2>
@@ -105,6 +104,7 @@
       colors      // shows a few colors with hex
       run         // runs .sj files (elf32)
       sDebug      // shows numbers., special characters... in color
+      init        // can Initializes 
           </pre>
           <button class="copy-btn" data-target="dev-commands">copy</button>
         </div>
@@ -115,7 +115,7 @@
             const pre = document.getElementById(btn.dataset.target);
             navigator.clipboard.writeText(pre.textContent.trim());
             btn.textContent = 'copied!';
-            setTimeout(() => btn.textContent = 'Kopieren', 1500);
+            setTimeout(() => btn.textContent = 'copy', 1500);
           });
         });
     </script>
@@ -126,7 +126,7 @@
     </div>
 
     <div class="btn-wrap">
-      <button class="button learnMore" onclick="location.href='download.html'">Downlod zw</button>
+      <button class="button learnMore" onclick="location.href='download.html'">Download</button>
     </div>
   </div>
 
