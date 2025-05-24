@@ -1,0 +1,46 @@
+body {
+    font-family: sans-serif;
+    margin: 2rem;
+    background-color: #ddd;
+}
+h1 {
+    font-size: 2rem;
+}
+#file-list {
+    margin-top: 1rem;
+}
+.file {
+    cursor: pointer;
+    color: blue;
+    text-decoration: none;
+    margin: 0.3rem 0;
+}
+pre {
+    background: #f4f4f4;
+    padding: 1rem;
+    white-space: pre-wrap;
+    border: 1px solid #ddd;
+    border-radius: 0px;
+}
+#copy-btn {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    background-color: #000000;
+    color: white;
+    border-radius: 0px;
+    transition: background-color 0.2s ease;
+}
+#copy-btn:hover {
+    background-color: #cacaca;
+    color: rgb(0, 0, 0);
+}
+/* Positioning container relative to position the button */
+#code-container {
+    position: relative;
+    margin-top: 1rem;
+}

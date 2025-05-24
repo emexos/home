@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Bot Source Code</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Download and View Source Code - AI-Bot</h1>
+  <p><a href="AI_Bot.zip" download>Download ZIP File</a></p>
+  <div id="file-list"></div>
+
+  <div id="code-container">
+    <button id="copy-btn" title="Copy source code">Copy</button>
+    <pre id="file-content">Select a file to view its content...</pre>
+  </div>
+
+    <p>In "<code>ai.js</code>", at  "<code>const triggerWords = ["@bot", "bot"];</code>", you can add custom trigger words, separated by commas</p>
+    <p>You can also customize how the bot acts in the "<code>const prompt =</code>" section</p>
+
+  <script>
+    const fileList = document.getElementById('file-list');
+    const fileContent = document.getElementById('file-content');
+    const copyBtn = document.getElementById('copy-btn');
+
+    let currentCode = ''; // speichert den aktuell angezeigten Code
+
+    fetch("filelist.json")
+      .then(res => res.json())
+      .then(files => {
+        Object.keys(files).forEach(path => {
+          const el = document.createElement('div');
+          el.className = 'file';
+          el.textContent = path;
+          el.onclick = () => {
+            currentCode = files[path];
+            fileContent.textContent = currentCode;
+          };
+          fileList.appendChild(el);
+        });
+      })
+      .catch(err => {
+        fileContent.textContent = 'Failed to load files.';
+        console.error(err);
+      });
+
+    copyBtn.onclick = () => {
+      if (!currentCode) return;
+      navigator.clipboard.writeText(currentCode).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+        }, 1500);
+      }).catch(err => {
+        console.error('Copy failed:', err);
+      });
+    };
+  </script>
+</body>
+</html>
