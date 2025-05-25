@@ -1,0 +1,25 @@
+body {
+    padding: 30px;
+    padding-top: 45px;
+    text-align: center;
+    display: flex; /* Enable Flexbox */
+    justify-content: center; /* Center horizontally */
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+}
+
+.center {
+    background-color: rgb(195, 229, 255);
+    border: 0px;
+    border-radius: 100px;
+    max-width: 400px;
+
+}
+
+.div {
+    padding: 15px;
+}
+
+h1 {
+
+}
