@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+#maze {
+    display: grid;
+    margin: 20px auto;
+    width: fit-content;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    border: 1px solid #000;
+}
+
+.wall-top {
+    border-top: 2px solid #000;
+}
+
+.wall-right {
+    border-right: 2px solid #000;
+}
+
+.wall-bottom {
+    border-bottom: 2px solid #000;
+}
+
+.wall-left {
+    border-left: 2px solid #000;
+}
