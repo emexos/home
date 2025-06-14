@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Maze 20×20 with Rooms</title>
+  <title>Maze 50×50 generator</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       display: flex;
@@ -12,40 +13,52 @@
       background: #eee;
       color: #111;
       font-family: sans-serif;
+      font-size: 18px;
       height: 100vh;
       justify-content: center;
     }
     #btn {
-      padding: 10px 20px;
+      padding: 12px 24px;
       margin-bottom: 20px;
       cursor: pointer;
       background: #ddd;
       color: #111;
       border: none;
-      font-size: 1rem;
+      font-size: 1.5rem;
       border-radius: 12px;
     }
     #maze {
       display: grid;
-      grid-template-columns: repeat(20, 20px);
-      grid-template-rows:    repeat(20, 20px);
+      grid-template-columns: repeat(50, 12px);
+      grid-template-rows:    repeat(50, 12px);
     }
     .cell {
-      width: 20px;
-      height: 20px;
+      width: 12px;
+      height: 12px;
       background: #fff;
+      position: relative;
+    }
     .top    { border-top:    2px solid #111; }
     .right  { border-right:  2px solid #111; }
     .bottom { border-bottom: 2px solid #111; }
     .left   { border-left:   2px solid #111; }
+    .label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: #111;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
   <button id="btn">Generate New Maze</button>
   <div id="maze"></div>
   <script>
-    const rows = 20;
-    const cols = 20;
+    const rows = 50;
+    const cols = 50;
     let grid = [];
     let rooms = [];
 
@@ -74,14 +87,12 @@
       const occupancy = Array(rows).fill().map(() => Array(cols).fill(false));
       const roomCount = 6;
       let attempts = 0;
-      while (rooms.length < roomCount && attempts < 1000) {
+      while (rooms.length < roomCount && attempts < 2000) {
         attempts++;
-        const w = Math.floor(Math.random() * 3) + 3; // 3 to 5
-        const h = Math.floor(Math.random() * 3) + 2; // 2 to 4
-    
+        const w = Math.floor(Math.random() * 3) + 3;
+        const h = Math.floor(Math.random() * 3) + 2;
         const x = Math.floor(Math.random() * (cols - w - 2)) + 1;
         const y = Math.floor(Math.random() * (rows - h - 2)) + 1;
-    
         let overlap = false;
         for (let yy = y; yy < y + h; yy++) {
           for (let xx = x; xx < x + w; xx++) {
@@ -89,18 +100,15 @@
           }
         }
         if (overlap) continue;
-    
         for (let yy = y; yy < y + h; yy++) {
           for (let xx = x; xx < x + w; xx++) {
             occupancy[yy][xx] = true;
             const cell = grid[yy][xx];
             cell.visited = true;
-    
             cell.walls.top = false;
             cell.walls.right = false;
             cell.walls.bottom = false;
             cell.walls.left = false;
-    
             if (yy === y) cell.walls.top = true;
             if (yy === y + h - 1) cell.walls.bottom = true;
             if (xx === x) cell.walls.left = true;
@@ -110,7 +118,18 @@
         rooms.push({ x, y, w, h });
       }
     }
-    
+
+    function assignLabels() {
+      const indices = rooms.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      if (rooms[indices[0]]) rooms[indices[0]].label = 'S';
+      if (rooms[indices[1]]) rooms[indices[1]].label = 'M';
+      if (rooms[indices[2]]) rooms[indices[2]].label = 'M';
+    }
+
     function getNeighbour(cell) {
       const { x, y } = cell;
       const neighbours = [];
@@ -118,8 +137,7 @@
       if (x < cols - 1 && !grid[y][x + 1].visited) neighbours.push(grid[y][x + 1]);
       if (y < rows - 1 && !grid[y + 1][x].visited) neighbours.push(grid[y + 1][x]);
       if (x > 0 && !grid[y][x - 1].visited)      neighbours.push(grid[y][x - 1]);
-      if (!neighbours.length) return null;
-      return neighbours[Math.floor(Math.random() * neighbours.length)];
+      return neighbours.length ? neighbours[Math.floor(Math.random() * neighbours.length)] : null;
     }
 
     function removeWalls(a, b) {
@@ -128,25 +146,25 @@
       if (dx === -1){ a.walls.right = false; b.walls.left = false; }
       const dy = a.y - b.y;
       if (dy === 1) { a.walls.top = false;   b.walls.bottom = false; }
-      if (dy === -1){ a.walls.bottom = false;b.walls.top = false; }
+      if (dy === -1){ a.walls.bottom = false; b.walls.top = false; }
     }
 
     function connectRooms() {
       rooms.forEach(room => {
-        const borderCells = [];
+        const border = [];
         for (let yy = room.y; yy < room.y + room.h; yy++) {
           for (let xx = room.x; xx < room.x + room.w; xx++) {
-            const cell = grid[yy][xx];
             [[0,-1],[1,0],[0,1],[-1,0]].forEach(([dx,dy]) => {
               const nx = xx + dx, ny = yy + dy;
-              if (nx>=0 && nx<cols && ny>=0 && ny<rows && !rooms.some(r=>nx>=r.x&&nx<r.x+r.w&&ny>=r.y&&ny<r.y+r.h)) {
-                borderCells.push({cell, neighbour: grid[ny][nx]});
+              if (nx>=0 && nx<cols && ny>=0 && ny<rows
+                  && !rooms.some(r=>nx>=r.x&&nx<r.x+r.w&&ny>=r.y&&ny<r.y+r.h)) {
+                border.push({cell: grid[yy][xx], neighbour: grid[ny][nx]});
               }
             });
           }
         }
-        if (borderCells.length) {
-          const {cell, neighbour} = borderCells[Math.floor(Math.random()*borderCells.length)];
+        if (border.length) {
+          const {cell, neighbour} = border[Math.floor(Math.random()*border.length)];
           removeWalls(cell, neighbour);
         }
       });
@@ -155,6 +173,12 @@
     function drawMaze() {
       const container = document.getElementById('maze');
       container.innerHTML = '';
+      rooms.forEach(room => {
+        if (room.label) {
+          room.cx = room.x + Math.floor(room.w/2);
+          room.cy = room.y + Math.floor(room.h/2);
+        }
+      });
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           const cell = grid[y][x];
@@ -164,6 +188,14 @@
           if (cell.walls.right)  el.classList.add('right');
           if (cell.walls.bottom) el.classList.add('bottom');
           if (cell.walls.left)   el.classList.add('left');
+          rooms.forEach(room => {
+            if (room.label && x === room.cx && y === room.cy) {
+              const lbl = document.createElement('div');
+              lbl.classList.add('label');
+              lbl.textContent = room.label;
+              el.appendChild(lbl);
+            }
+          });
           container.appendChild(el);
         }
       }
@@ -172,6 +204,7 @@
     function generateMaze() {
       initGrid();
       placeRooms();
+      assignLabels();
       const stack = [];
       let current = grid[0][0];
       current.visited = true;
