@@ -2,120 +2,188 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maze Generator for leander</title>
+  <title>Maze 20×20 with Rooms</title>
   <style>
-    body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #222; }
-    canvas { background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #eee; /* light mode */
+      color: #111;
+      font-family: sans-serif;
+      height: 100vh;
+      justify-content: center;
+    }
+    #btn {
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      background: #ddd;
+      color: #111;
+      border: none;
+      font-size: 1rem;
+      border-radius: 12px; /* Abrundung */
+    }
+    #maze {
+      display: grid;
+      grid-template-columns: repeat(20, 20px);
+      grid-template-rows:    repeat(20, 20px);
+    }
+    .cell {
+      width: 20px;
+      height: 20px;
+      background: #fff; /* Zellen weiß */
+    }
+    .top    { border-top:    2px solid #111; }
+    .right  { border-right:  2px solid #111; }
+    .bottom { border-bottom: 2px solid #111; }
+    .left   { border-left:   2px solid #111; }
   </style>
 </head>
 <body>
-  <canvas id="maze" width="700" height="700"></canvas>
+  <button id="btn">Generate New Maze</button>
+  <div id="maze"></div>
   <script>
-    const cols = 35;
-    const rows = 35;
-    const size = 20;
-    const canvas = document.getElementById('maze');
-    const ctx = canvas.getContext('2d');
+    const rows = 20;
+    const cols = 20;
+    let grid = [];
+    let rooms = [];
 
     class Cell {
       constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.walls = [true, true, true, true];
         this.visited = false;
-      }
-      show() {
-        const x = this.x * size;
-        const y = this.y * size;
-        ctx.strokeStyle = '#000';
-        if (this.walls[0]) ctx.beginPath(), ctx.moveTo(x, y), ctx.lineTo(x + size, y), ctx.stroke();
-        if (this.walls[1]) ctx.beginPath(), ctx.moveTo(x + size, y), ctx.lineTo(x + size, y + size), ctx.stroke();
-        if (this.walls[2]) ctx.beginPath(), ctx.moveTo(x + size, y + size), ctx.lineTo(x, y + size), ctx.stroke();
-        if (this.walls[3]) ctx.beginPath(), ctx.moveTo(x, y + size), ctx.lineTo(x, y), ctx.stroke();
-      }
-      checkNeighbors(grid) {
-        const neighbors = [];
-        const top = grid[index(this.x, this.y - 1)];
-        const right = grid[index(this.x + 1, this.y)];
-        const bottom = grid[index(this.x, this.y + 1)];
-        const left = grid[index(this.x - 1, this.y)];
-        if (top && !top.visited) neighbors.push(top);
-        if (right && !right.visited) neighbors.push(right);
-        if (bottom && !bottom.visited) neighbors.push(bottom);
-        if (left && !left.visited) neighbors.push(left);
-        return neighbors.length > 0 ? neighbors[Math.floor(Math.random() * neighbors.length)] : undefined;
+        this.walls = { top: true, right: true, bottom: true, left: true };
       }
     }
 
-    function index(x, y) {
-      if (x < 0 || y < 0 || x >= cols || y >= rows) return -1;
-      return x + y * cols;
+    function initGrid() {
+      grid = [];
+      for (let y = 0; y < rows; y++) {
+        const row = [];
+        for (let x = 0; x < cols; x++) {
+          row.push(new Cell(x, y));
+        }
+        grid.push(row);
+      }
+      rooms = [];
     }
 
-    const grid = [];
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        grid.push(new Cell(x, y));
+    function placeRooms() {
+      const occupancy = Array(rows).fill().map(() => Array(cols).fill(false));
+      const roomCount = 6;
+      let attempts = 0;
+      while (rooms.length < roomCount && attempts < 1000) {
+        attempts++;
+        const w = Math.floor(Math.random() * 3) + 3; // 3 to 5
+        const h = Math.floor(Math.random() * 3) + 2; // 2 to 4
+
+        // x und y mit mindestens 1 Zelle Abstand vom Rand
+        const x = Math.floor(Math.random() * (cols - w - 2)) + 1;
+        const y = Math.floor(Math.random() * (rows - h - 2)) + 1;
+
+        let overlap = false;
+        for (let yy = y; yy < y + h; yy++) {
+          for (let xx = x; xx < x + w; xx++) {
+            if (occupancy[yy][xx]) overlap = true;
+          }
+        }
+        if (overlap) continue;
+        for (let yy = y; yy < y + h; yy++) {
+          for (let xx = x; xx < x + w; xx++) {
+            occupancy[yy][xx] = true;
+            const cell = grid[yy][xx];
+            cell.visited = true;
+            cell.walls.top = cell.walls.right = cell.walls.bottom = cell.walls.left = false;
+          }
+        }
+        rooms.push({ x, y, w, h });
       }
     }
 
-    const numRooms = Math.floor(Math.random() * 3) + 2;
-    for (let i = 0; i < numRooms; i++) {
-      const rx = Math.floor(Math.random() * (cols - 1));
-      const ry = Math.floor(Math.random() * (rows - 1));
-      const a = grid[index(rx, ry)];
-      const b = grid[index(rx + 1, ry)];
-      const c = grid[index(rx, ry + 1)];
-      const d = grid[index(rx + 1, ry + 1)];
-      a.walls = [false, false, false, false];
-      b.walls = [false, false, false, false];
-      c.walls = [false, false, false, false];
-      d.walls = [false, false, false, false];
-      removeWalls(a, b);
-      removeWalls(a, c);
-      removeWalls(b, d);
-      removeWalls(c, d);
+    function getNeighbour(cell) {
+      const { x, y } = cell;
+      const neighbours = [];
+      if (y > 0 && !grid[y - 1][x].visited)      neighbours.push(grid[y - 1][x]);
+      if (x < cols - 1 && !grid[y][x + 1].visited) neighbours.push(grid[y][x + 1]);
+      if (y < rows - 1 && !grid[y + 1][x].visited) neighbours.push(grid[y + 1][x]);
+      if (x > 0 && !grid[y][x - 1].visited)      neighbours.push(grid[y][x - 1]);
+      if (!neighbours.length) return null;
+      return neighbours[Math.floor(Math.random() * neighbours.length)];
     }
-
-    let current = grid[0];
-    const stack = [];
 
     function removeWalls(a, b) {
-      const x = a.x - b.x;
-      if (x === 1) { a.walls[3] = false; b.walls[1] = false; }
-      else if (x === -1) { a.walls[1] = false; b.walls[3] = false; }
-      const y = a.y - b.y;
-      if (y === 1) { a.walls[0] = false; b.walls[2] = false; }
-      else if (y === -1) { a.walls[2] = false; b.walls[0] = false; }
+      const dx = a.x - b.x;
+      if (dx === 1) { a.walls.left = false;  b.walls.right = false; }
+      if (dx === -1){ a.walls.right = false; b.walls.left = false; }
+      const dy = a.y - b.y;
+      if (dy === 1) { a.walls.top = false;   b.walls.bottom = false; }
+      if (dy === -1){ a.walls.bottom = false;b.walls.top = false; }
     }
 
-    function draw() {
-      for (let i = 0; i < grid.length; i++) grid[i].show();
-      current.visited = true;
-      const next = current.checkNeighbors(grid);
-      if (next) {
-        next.visited = true;
-        stack.push(current);
-        removeWalls(current, next);
-        current = next;
-      } else if (stack.length > 0) {
-        current = stack.pop();
+    function connectRooms() {
+      rooms.forEach(room => {
+        const borderCells = [];
+        for (let yy = room.y; yy < room.y + room.h; yy++) {
+          for (let xx = room.x; xx < room.x + room.w; xx++) {
+            const cell = grid[yy][xx];
+            [[0,-1],[1,0],[0,1],[-1,0]].forEach(([dx,dy]) => {
+              const nx = xx + dx, ny = yy + dy;
+              if (nx>=0 && nx<cols && ny>=0 && ny<rows && !rooms.some(r=>nx>=r.x&&nx<r.x+r.w&&ny>=r.y&&ny<r.y+r.h)) {
+                borderCells.push({cell, neighbour: grid[ny][nx]});
+              }
+            });
+          }
+        }
+        if (borderCells.length) {
+          const {cell, neighbour} = borderCells[Math.floor(Math.random()*borderCells.length)];
+          removeWalls(cell, neighbour);
+        }
+      });
+    }
+
+    function drawMaze() {
+      const container = document.getElementById('maze');
+      container.innerHTML = '';
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const cell = grid[y][x];
+          const el = document.createElement('div');
+          el.classList.add('cell');
+          if (cell.walls.top)    el.classList.add('top');
+          if (cell.walls.right)  el.classList.add('right');
+          if (cell.walls.bottom) el.classList.add('bottom');
+          if (cell.walls.left)   el.classList.add('left');
+          container.appendChild(el);
+        }
       }
-      if (stack.length > 0) requestAnimationFrame(draw);
-      else drawExit();
     }
 
-    function drawExit() {
-      ctx.clearRect((cols - 1) * size, (rows - 1) * size, size, size);
-      ctx.fillStyle = '#0f0';
-      ctx.fillRect((cols - 1) * size + 2, (rows - 1) * size + 2, size - 4, size - 4);
-      ctx.clearRect(0, 0, size, size);
-      ctx.fillStyle = '#f00';
-      ctx.fillRect(2, 2, size - 4, size - 4);
+    function generateMaze() {
+      initGrid();
+      placeRooms();
+      const stack = [];
+      let current = grid[0][0];
+      current.visited = true;
+      do {
+        const next = getNeighbour(current);
+        if (next) {
+          next.visited = true;
+          stack.push(current);
+          removeWalls(current, next);
+          current = next;
+        } else if (stack.length) {
+          current = stack.pop();
+        }
+      } while (stack.length);
+      connectRooms();
+      drawMaze();
     }
 
-    draw();
+    document.getElementById('btn').addEventListener('click', generateMaze);
+    window.addEventListener('DOMContentLoaded', generateMaze);
   </script>
 </body>
 </html>
