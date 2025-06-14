@@ -1,21 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Maze Generator</title>
-    <link rel="stylesheet" href="style.css">
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maze Generator für leander</title>
+  <style>
+    body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #222; }
+    canvas { background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+  </style>
 </head>
 <body>
-    
-    <h1>Maze Generator für Leander</h1>
-    
-    <button id="btn"> -> generiere ein Maze <- </button>
-    
-    <div id="maze"></div>
+  <canvas id="maze" width="400" height="400"></canvas>
+  <script>
+    const cols = 20;
+    const rows = 20;
+    const size = 20;
+    const canvas = document.getElementById('maze');
+    const ctx = canvas.getContext('2d');
 
-    
-    <script src="script.js"></script>
-    
+    class Cell {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.walls = [true, true, true, true]; // top right bottom left
+        this.visited = false;
+      }
+      show() {
+        const x = this.x * size;
+        const y = this.y * size;
+        ctx.strokeStyle = '#000';
+        if (this.walls[0]) ctx.beginPath(), ctx.moveTo(x, y), ctx.lineTo(x + size, y), ctx.stroke();
+        if (this.walls[1]) ctx.beginPath(), ctx.moveTo(x + size, y), ctx.lineTo(x + size, y + size), ctx.stroke();
+        if (this.walls[2]) ctx.beginPath(), ctx.moveTo(x + size, y + size), ctx.lineTo(x, y + size), ctx.stroke();
+        if (this.walls[3]) ctx.beginPath(), ctx.moveTo(x, y + size), ctx.lineTo(x, y), ctx.stroke();
+      }
+      checkNeighbors(grid) {
+        const neighbors = [];
+        const top = grid[index(this.x, this.y - 1)];
+        const right = grid[index(this.x + 1, this.y)];
+        const bottom = grid[index(this.x, this.y + 1)];
+        const left = grid[index(this.x - 1, this.y)];
+        if (top && !top.visited) neighbors.push(top);
+        if (right && !right.visited) neighbors.push(right);
+        if (bottom && !bottom.visited) neighbors.push(bottom);
+        if (left && !left.visited) neighbors.push(left);
+        if (neighbors.length > 0) return neighbors[Math.floor(Math.random() * neighbors.length)];
+        return undefined;
+      }
+    }
+
+    function index(x, y) {
+      if (x < 0 || y < 0 || x >= cols || y >= rows) return -1;
+      return x + y * cols;
+    }
+
+    const grid = [];
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        grid.push(new Cell(x, y));
+      }
+    }
+
+    let current = grid[0];
+    const stack = [];
+
+    function removeWalls(a, b) {
+      const x = a.x - b.x;
+      if (x === 1) { a.walls[3] = false; b.walls[1] = false; }
+      else if (x === -1) { a.walls[1] = false; b.walls[3] = false; }
+      const y = a.y - b.y;
+      if (y === 1) { a.walls[0] = false; b.walls[2] = false; }
+      else if (y === -1) { a.walls[2] = false; b.walls[0] = false; }
+    }
+
+    function draw() {
+      for (let i = 0; i < grid.length; i++) grid[i].show();
+      current.visited = true;
+      const next = current.checkNeighbors(grid);
+      if (next) {
+        next.visited = true;
+        stack.push(current);
+        removeWalls(current, next);
+        current = next;
+      } else if (stack.length > 0) {
+        current = stack.pop();
+      }
+      if (stack.length > 0) requestAnimationFrame(draw);
+      else drawExit();
+    }
+
+    function drawExit() {
+      ctx.clearRect((cols - 1) * size, (rows - 1) * size, size, size);
+      ctx.fillStyle = '#0f0';
+      ctx.fillRect((cols - 1) * size + 2, (rows - 1) * size + 2, size - 4, size - 4);
+      ctx.clearRect(0, 0, size, size);
+      ctx.fillStyle = '#f00';
+      ctx.fillRect(2, 2, size - 4, size - 4);
+    }
+
+    draw();
+  </script>
 </body>
 </html>
