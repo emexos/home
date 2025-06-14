@@ -2,141 +2,138 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>map maker For leander</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    :root { --cellsize: 20px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #eee;
-      color: #111;
-      font-family: sans-serif;
-      font-size: 18px;
-      height: 100vh;
-      justify-content: center;
+      display: flex; flex-direction: column; align-items: center;
+      background: #eee; color: #111; font-family: sans-serif;
+      font-size: 18px; height: 100vh; justify-content: center; position: relative;
     }
-    #btn {
-      padding: 20px 36px;
-      margin-bottom: 20px;
+    #optBtn {
+      position: absolute; top: 20px; right: 20px;
+      padding: 10px; font-size: 1.5rem; background: #ddd; border: none; border-radius: 8px;
       cursor: pointer;
-      background: #ddd;
-      color: #111;
-      border: none;
-      font-size: 1.15rem;
-      border-radius: 50px;
+    }
+    #options {
+      position: absolute; top: 0; right: -220px;
+      width: 200px; height: 100%; background: #fff; transition: right 0.3s ease; z-index: 10;
+    }
+    #options h2 {
+      font-family: 'Press Start 2P', monospace; text-align: center; margin: 20px 0;
+    }
+    .tool-btn {
+      display: block; width: 60px; margin: 10px auto;
+      padding: 10px; text-align: center; font-family: 'Press Start 2P', monospace;
+      font-size: 1rem; background: #ddd; border: none; cursor: grab;
     }
     #maze {
-      display: grid;
-      grid-template-columns: repeat(40, 16px);
-      grid-template-rows:    repeat(40, 16px);
+      position: relative; box-sizing: content-box;
+      width: calc(40 * var(--cellsize)); height: calc(40 * var(--cellsize));
+      border: 2px solid #111;
     }
-    .cell { width: 16px; height: 16px; background: #111; position: relative; }
+    .cell {
+      position: absolute; width: var(--cellsize); height: var(--cellsize);
+      background: rgb(246,243,238);
+    }
     .floor { background: #fff; }
+    .block { background: #111; }
+    .highlight { outline: 2px dashed #888; }
     .label {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 12px;
-      color: #111;
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      font-family: 'Press Start 2P', monospace; font-size: 0.8rem; color: #111;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <button id="btn">Generate Map</button>
+  <button id="optBtn">☰</button>
+  <div id="options">
+    <h2>Buildings</h2>
+    <button class="tool-btn" id="placeS" draggable="true">S</button>
+    <button class="tool-btn" id="placeM" draggable="true">M</button>
+    <h2>Blocks</h2>
+    <button class="tool-btn" id="placeB" draggable="true">B</button>
+  </div>
   <div id="maze"></div>
   <script>
-    const rows = 40, cols = 40;
-    let grid = [], rooms = [];
-    class Cell { constructor() { this.type = 'wall'; } }
-
-    function initGrid() {
-      grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => new Cell()));
-      rooms = [];
+    const rows=40, cols=40; let grid=[], rooms=[];
+    class Cell { constructor(){ this.type='wall'; } }
+    function initGrid(){ grid=Array.from({length:rows},()=>Array.from({length:cols},()=>new Cell())); rooms=[]; }
+    function placeRooms(){ const occ=Array.from({length:rows},()=>Array(cols).fill(false));
+      while(rooms.length<6){ const w=rand(8,15),h=rand(6,12),x=rand(1,cols-w-2),y=rand(1,rows-h-2);
+        if(checkOcc(x,y,w,h,occ)) continue; markOcc(x,y,w,h,occ);
+        for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)grid[yy][xx].type='floor';
+        rooms.push({x,y,w,h,deadendSide:null}); }
     }
-
-    function placeRooms() {
-      const occupancy = Array.from({ length: rows }, () => Array(cols).fill(false));
-      const roomCount = 6;
-      let attempts = 0;
-      while (rooms.length < roomCount && attempts < 2000) {
-        attempts++;
-        const w = Math.floor(Math.random() * 8) + 8;  // 8–15
-        const h = Math.floor(Math.random() * 7) + 6;  // 6–12
-        const x = Math.floor(Math.random() * (cols - w - 2)) + 1;
-        const y = Math.floor(Math.random() * (rows - h - 2)) + 1;
-        let overlap = false;
-        // check buffer
-        for (let yy = y - 1; yy <= y + h; yy++) {
-          for (let xx = x - 1; xx <= x + w; xx++) {
-            if (yy >= 0 && yy < rows && xx >= 0 && xx < cols && occupancy[yy][xx]) { overlap = true; break; }
-          }
-          if (overlap) break;
-        }
-        if (overlap) continue;
-        // mark buffer
-        for (let yy = y - 1; yy <= y + h; yy++) {
-          for (let xx = x - 1; xx <= x + w; xx++) {
-            if (yy >= 0 && yy < rows && xx >= 0 && xx < cols) occupancy[yy][xx] = true;
-          }
-        }
-        // carve room
-        for (let yy = y; yy < y + h; yy++) {
-          for (let xx = x; xx < x + w; xx++) {
-            grid[yy][xx].type = 'floor';
-          }
-        }
-        rooms.push({ x, y, w, h });
-      }
-    }
-
-    function assignLabels() {
-      rooms.forEach((r, i) => { if (i === 0) r.label = 'S'; if (i === 1) r.label = 'M'; });
-    }
-
-    function connectRooms() {
-      const centers = rooms.map(r => ({ x: r.x + Math.floor(r.w / 2), y: r.y + Math.floor(r.h / 2) }));
-      for (let i = 1; i < centers.length; i++) {
-        carveCorridor(centers[i - 1], centers[i]);
-      }
-    }
-
-    function carveCorridor(a, b) {
-      let x = a.x, y = a.y;
-      const horizontalFirst = Math.random() < 0.5;
-      if (horizontalFirst) {
-        while (x !== b.x) { if (grid[y][x].type !== 'floor') grid[y][x].type = 'floor'; x += x < b.x ? 1 : -1; }
-        while (y !== b.y) { if (grid[y][x].type !== 'floor') grid[y][x].type = 'floor'; y += y < b.y ? 1 : -1; }
-      } else {
-        while (y !== b.y) { if (grid[y][x].type !== 'floor') grid[y][x].type = 'floor'; y += y < b.y ? 1 : -1; }
-        while (x !== b.x) { if (grid[y][x].type !== 'floor') grid[y][x].type = 'floor'; x += x < b.x ? 1 : -1; }
-      }
-      grid[b.y][b.x].type = 'floor';
-    }
-
-    function drawMap() {
-      const container = document.getElementById('maze'); container.innerHTML = '';
-      rooms.forEach(r => { if (r.label) { r.cx = r.x + Math.floor(r.w / 2); r.cy = r.y + Math.floor(r.h / 2); } });
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          const el = document.createElement('div'); el.className = 'cell';
-          if (grid[y][x].type === 'floor') el.classList.add('floor');
-          rooms.forEach(r => {
-            if (r.label && r.cx === x && r.cy === y) {
-              const lbl = document.createElement('div'); lbl.className = 'label'; lbl.textContent = r.label; el.appendChild(lbl);
+    function assignLabels(){rooms.forEach((r,i)=>{if(i===0)r.label='S';if(i===1)r.label='M';});}
+    function connectRooms(){ const centers=rooms.map(r=>({x:r.x+Math.floor(r.w/2),y:r.y+Math.floor(r.h/2)}));
+      centers.slice(1).forEach((c,i)=>carveCorridor(centers[i],c)); }
+    function carveCorridor(a,b){ let x=a.x,y=a.y;
+      if(Math.random()<.5){while(x!==b.x){grid[y][x].type='floor';x+=x<b.x?1:-1;}while(y!==b.y){grid[y][x].type='floor';y+=y<b.y?1:-1;}}
+      else{while(y!==b.y){grid[y][x].type='floor';y+=y<b.y?1:-1;}while(x!==b.x){grid[y][x].type='floor';x+=x<b.x?1:-1;}}
+      grid[b.y][b.x].type='floor'; }
+    function addDeadEnd(){const cands=rooms.filter(r=>!r.deadendSide);if(!cands.length)return;const room=cands[rand(0,cands.length-1)];
+      for(const side of['top','right','bottom','left']){
+        let sx,sy,dx=0,dy=0;
+        if(side==='top'){sx=room.x+Math.floor(room.w/2);sy=room.y-1;dy=-1;}
+        if(side==='bottom'){sx=room.x+Math.floor(room.w/2);sy=room.y+room.h;dy=1;}
+        if(side==='left'){sx=room.x-1;sy=room.y+Math.floor(room.h/2);dx=-1;}
+        if(side==='right'){sx=room.x+room.w;sy=room.y+Math.floor(room.h/2);dx=1;}
+        if(sx<0||sx>=cols||sy<0||sy>=rows||grid[sy][sx].type!=='wall')continue;
+        for(let i=0,l=rand(5,9),x=sx,y=sy;i<l;i++,x+=dx,y+=dy)if(x>=0&&x<cols&&y>=0&&y<rows)grid[y][x].type='floor';
+        room.deadendSide=side;break;
+      }}
+    function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+    function checkOcc(x,y,w,h,occ){
+      for(let yy=y-1;yy<y+h+1;yy++)for(let xx=x-1;xx<x+w+1;xx++)
+        if(yy>=0&&yy<rows&&xx>=0&&xx<cols&&occ[yy][xx])return true;return false;}
+    function markOcc(x,y,w,h,occ){
+      for(let yy=y-1;yy<y+h+1;yy++)for(let xx=x-1;xx<x+w+1;xx++)
+        if(yy>=0&&yy<rows&&xx>=0&&xx<cols)occ[yy][xx]=true;}
+    function setupTools(){['placeS','placeM','placeB'].forEach(id=>{
+      const btn=document.getElementById(id);
+      btn.addEventListener('dragstart',e=>e.dataTransfer.setData('text',id));
+    });}
+    function drawMap(){ const mz=document.getElementById('maze'); mz.innerHTML=''; const size=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cellsize'));
+      const roomMap={}; rooms.forEach((r,idx)=>{for(let yy=r.y;yy<r.y+r.h;yy++)for(let xx=r.x;xx<r.x+r.w;xx++)roomMap[yy+','+xx]=idx;});
+      rooms.forEach(r=>{if(r.label){r.cx=r.x+Math.floor(r.w/2);r.cy=r.y+Math.floor(r.h/2);}});
+      for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){const el=document.createElement('div');el.className='cell';el.style.left=x*size+'px';el.style.top=y*size+'px';
+        const key=y+','+x;
+        const type=grid[y][x].type;
+        if(type==='floor'||type==='block'||type==='wall'){
+          if(type==='floor')el.classList.add('floor');
+          if(type==='block')el.classList.add('block');
+          el.dataset.room=roomMap[key]!==undefined?roomMap[key]:'';
+          ['dragover','dragenter'].forEach(evt=>el.addEventListener(evt,e=>{e.preventDefault();el.classList.add('highlight');}));
+          el.addEventListener('dragleave',()=>el.classList.remove('highlight'));
+          el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('highlight');
+            const tool=e.dataTransfer.getData('text');
+            if(tool==='placeB'){
+              grid[y][x].type='block'; drawMap(); return;
+            }
+            if(el.dataset.room!==''&& (tool==='placeS'||tool==='placeM')){
+              const roomIndex = parseInt(el.dataset.room);
+              const label = tool==='placeS'?'S':'M';
+              rooms[roomIndex].label = label;
+              drawMap();
             }
           });
-          container.appendChild(el);
+          if(type==='floor'||type==='block'){
+            [{dx:0,dy:-1,side:'Top'},{dx:1,dy:0,side:'Right'},{dx:0,dy:1,side:'Bottom'},{dx:-1,dy:0,side:'Left'}]
+            .forEach(n=>{const yy=y+n.dy,xx=x+n.dx;if(yy<0||yy>=rows||xx<0||xx>=cols||grid[yy][xx].type!==(type))el.style['border'+n.side]='2px solid #111';});
+          }
         }
+        rooms.forEach(r=>{if(r.label&&r.cx===x&&r.cy===y){const lbl=document.createElement('div');lbl.className='label';lbl.textContent=r.label;el.appendChild(lbl);}});
+        mz.appendChild(el);
       }
     }
-
-    function generateMap() { initGrid(); placeRooms(); assignLabels(); connectRooms(); drawMap(); }
-    document.getElementById('btn').addEventListener('click', generateMap);
-    window.addEventListener('DOMContentLoaded', generateMap);
+    function generate(){initGrid();placeRooms();assignLabels();connectRooms();addDeadEnd();drawMap();setupTools();}
+    document.getElementById('optBtn').addEventListener('click',()=>{const opt=document.getElementById('options');opt.style.right=opt.style.right==='0px'?'-220px':'0px';});
+    window.addEventListener('DOMContentLoaded',generate);
   </script>
 </body>
 </html>
