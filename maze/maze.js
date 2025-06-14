@@ -1,31 +1,33 @@
-const rows = 10;
-const cols = 10;
-let maze = [];
+const rows = 20;
+const cols = 20;
+let grid = [];
 
-function createMazeArray() {
-    maze = [];
+function Cell(x, y) {
+    this.x = x;
+    this.y = y;
+    this.visited = false;
+    this.walls = { top: true, right: true, bottom: true, left: true };
+}
+
+function createGrid() {
+    grid = [];
     for (let y = 0; y < rows; y++) {
-        const row = [];
+        let row = [];
         for (let x = 0; x < cols; x++) {
-            row.push({
-                x,
-                y,
-                visited: false,
-                walls: { top: true, right: true, bottom: true, left: true }
-            });
+            row.push(new Cell(x, y));
         }
-        maze.push(row);
+        grid.push(row);
     }
 }
 
 function generateMaze() {
-    createMazeArray();
+    createGrid();
     let stack = [];
-    let current = maze[0][0];
+    let current = grid[0][0];
     current.visited = true;
 
     do {
-        let next = getUnvisitedNeighbour(current);
+        let next = checkNeighbours(current);
         if (next) {
             next.visited = true;
             stack.push(current);
@@ -39,19 +41,21 @@ function generateMaze() {
     drawMaze();
 }
 
-function getUnvisitedNeighbour(cell) {
-    const neighbours = [];
+function checkNeighbours(cell) {
     const { x, y } = cell;
+    const neighbours = [];
 
-    if (y > 0 && !maze[y - 1][x].visited) neighbours.push(maze[y - 1][x]);
-    if (x < cols - 1 && !maze[y][x + 1].visited) neighbours.push(maze[y][x + 1]);
-    if (y < rows - 1 && !maze[y + 1][x].visited) neighbours.push(maze[y + 1][x]);
-    if (x > 0 && !maze[y][x - 1].visited) neighbours.push(maze[y][x - 1]);
+    if (y > 0 && !grid[y - 1][x].visited) neighbours.push(grid[y - 1][x]);
+    if (x < cols - 1 && !grid[y][x + 1].visited) neighbours.push(grid[y][x + 1]);
+    if (y < rows - 1 && !grid[y + 1][x].visited) neighbours.push(grid[y + 1][x]);
+    if (x > 0 && !grid[y][x - 1].visited) neighbours.push(grid[y][x - 1]);
 
     if (neighbours.length > 0) {
-        return neighbours[Math.floor(Math.random() * neighbours.length)];
+        const randIndex = Math.floor(Math.random() * neighbours.length);
+        return neighbours[randIndex];
+    } else {
+        return undefined;
     }
-    return undefined;
 }
 
 function removeWalls(a, b) {
@@ -76,22 +80,23 @@ function removeWalls(a, b) {
 }
 
 function drawMaze() {
-    const mazeContainer = document.getElementById('maze');
-    mazeContainer.style.gridTemplateColumns = `repeat(${cols}, 20px)`;
-    mazeContainer.innerHTML = '';
+    const maze = document.getElementById('maze');
+    maze.style.gridTemplateColumns = `repeat(${cols}, 25px)`;
+    maze.innerHTML = '';
 
     for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            const walls = maze[y][x].walls;
+            const walls = grid[y][x].walls;
             if (walls.top) cell.classList.add('wall-top');
             if (walls.right) cell.classList.add('wall-right');
             if (walls.bottom) cell.classList.add('wall-bottom');
             if (walls.left) cell.classList.add('wall-left');
-            mazeContainer.appendChild(cell);
+            maze.appendChild(cell);
         }
     }
 }
 
 generateMaze();
+
